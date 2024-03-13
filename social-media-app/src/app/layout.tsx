@@ -3,8 +3,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
-import TopBar from '@/components/shared/Topbar';
-import Bottombar from '@/components/shared/Bottombar';
+import TopBar from '@/components/shared/TopBar';
+import Bottombar from '@/components/shared/BottomBar';
 import LeftsideBar from '@/components/shared/LeftsideBar';
 import RightsideBar from '@/components/shared/RightsideBar';
 

@@ -7,8 +7,8 @@ import { SignOutButton, SignedIn, useAuth } from "@clerk/nextjs";
 import { sidebarLinks } from "@/constants";
 
 const LeftsideBar = () => {
-    const router = useRouter();
-    const pathname = usePathname();
+    const router = useRouter(); // Get the router object
+    const pathname = usePathname(); // Get the url current pathname
 
     return (
         <section className='custom-scrollbar leftsidebar'>

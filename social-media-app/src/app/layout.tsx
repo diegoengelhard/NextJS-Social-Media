@@ -35,6 +35,7 @@ export default function RootLayout({
             <RightsideBar />
           </main>
 
+          {/* Only for Phones & Tablets */}
           <Bottombar />
         </body>
       </html>

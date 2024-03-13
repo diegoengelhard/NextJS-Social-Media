@@ -1,9 +1,10 @@
-import Image from 'next/image'
+import { UserButton } from "@clerk/nextjs";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1>Social Media App</h1>
+    <main className="text-white">
+      <h1 className="text-4xl font-bold text-white">Welcome to the social media app</h1>
+      <UserButton afterSignOutUrl="/" />
     </main>
   )
 }

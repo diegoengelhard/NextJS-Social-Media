@@ -5,11 +5,17 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { usePathname, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from 'react-toastify';
 
+// Import lib methods
 import { UserValidation } from '@/lib/validations/user.validation';
 import { useUploadThing } from '@/lib/uploadthing';
 import { isBase64Image } from "@/lib/utils";
 
+// Import server actions
+import { updateUser } from "@/lib/actions/user.actions";
+
+// Import components
 import {
     Form,
     FormControl,
@@ -59,18 +65,41 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
     // Handle the form submit -> returns UserValidation object
     const onSubmit = async (values: z.infer<typeof UserValidation>) => {
-        const blob = values.profile_photo;
+        const userData = {
+            userId: user.id,
+            fullname: values.name,
+            username: values.username,
+            bio: values.bio,
+            image: values.profile_photo,
+            path: pathname,
+        };
+        console.log(userData);
 
-        const hasImageChanged = isBase64Image(blob);
-        if (hasImageChanged) {
-            const imgRes = await startUpload(files);
+        try {
+            const blob = values.profile_photo;
 
-            if (imgRes && (imgRes[0] as any).fileUrl) {
-                values.profile_photo = (imgRes[0] as any).fileUrl;
+            const hasImageChanged = isBase64Image(blob);
+            if (hasImageChanged) {
+                const imgRes = await startUpload(files);
+
+                if (imgRes && (imgRes[0] as any).fileUrl) {
+                    values.profile_photo = (imgRes[0] as any).fileUrl;
+                }
             }
-        }
+            
+            await updateUser(userData);
 
-        // TODO: Backend update api call
+            toast.success('Profile updated successfully!');
+
+            if (pathname === "/profile/edit") {
+                router.back();
+            } else {
+                router.push("/");
+            }
+        } catch (error: any) {
+            console.log(error);
+            toast.error(error.message);
+        }
     };
 
     const handleImage = (e: ChangeEvent<HTMLInputElement>, fieldChange: (value: string) => void) => {

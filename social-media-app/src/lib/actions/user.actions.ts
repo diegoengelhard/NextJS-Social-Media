@@ -33,6 +33,7 @@ export async function updateUser({ userId, bio, fullname, path, username, image 
             { upsert: true }
         );
 
+        // Revalidate the path if it's the profile edit page
         if (path === "/profile/edit") {
             revalidatePath(path);
         }

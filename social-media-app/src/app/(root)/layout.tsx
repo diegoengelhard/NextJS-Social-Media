@@ -8,6 +8,9 @@ import Bottombar from '@/components/shared/BottomBar';
 import LeftsideBar from '@/components/shared/LeftsideBar';
 import RightsideBar from '@/components/shared/RightsideBar';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -24,6 +27,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang='en'>
         <body className={`${inter.className} bg-dark-1`}>
+          <ToastContainer />
           <TopBar />
 
           <main className='flex flex-row'>

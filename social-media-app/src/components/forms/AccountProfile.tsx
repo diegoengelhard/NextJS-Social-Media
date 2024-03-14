@@ -1,12 +1,14 @@
 'use client';
-import React from 'react';
+import React, { ChangeEvent, useState } from "react";
 import * as z from "zod";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { usePathname, useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { UserValidation } from '@/lib/validations/user.validation';
+import { useUploadThing } from '@/lib/uploadthing';
+import { isBase64Image } from "@/lib/utils";
 
 import {
     Form,
@@ -39,6 +41,7 @@ interface Props {
 const AccountProfile = ({ user, btnTitle }: Props) => {
     const router = useRouter(); // Get the router object
     const pathname = usePathname(); // Get the current url pathname
+    const { startUpload } = useUploadThing("media");
 
     // Set states
     const [files, setFiles] = useState<File[]>([]);
@@ -56,7 +59,18 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
     // Handle the form submit -> returns UserValidation object
     const onSubmit = async (values: z.infer<typeof UserValidation>) => {
-        // logic here
+        const blob = values.profile_photo;
+
+        const hasImageChanged = isBase64Image(blob);
+        if (hasImageChanged) {
+            const imgRes = await startUpload(files);
+
+            if (imgRes && (imgRes[0] as any).fileUrl) {
+                values.profile_photo = (imgRes[0] as any).fileUrl;
+            }
+        }
+
+        // TODO: Backend update api call
     };
 
     const handleImage = (e: ChangeEvent<HTMLInputElement>, fieldChange: (value: string) => void) => {

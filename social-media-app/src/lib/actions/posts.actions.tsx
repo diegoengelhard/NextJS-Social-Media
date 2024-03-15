@@ -81,3 +81,47 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
 
     return { posts, isNext };
 }
+
+// Method to fetch post by id
+export async function fetchPostById(threadId: string) {
+    connect();
+
+    try {
+        const post = await Post.findById(threadId)
+            .populate({
+                path: "author",
+                model: User,
+                select: "_id id name image",
+            }) // Populate the author field with _id and username
+            // .populate({
+            //     path: "community",
+            //     model: Community,
+            //     select: "_id id name image",
+            // }) // Populate the community field with _id and name
+            .populate({
+                path: "children", // Populate the children field
+                populate: [
+                    {
+                        path: "author", // Populate the author field within children
+                        model: User,
+                        select: "_id id name parentId image", // Select only _id and username fields of the author
+                    },
+                    {
+                        path: "children", // Populate the children field within children
+                        model: Post, // The model of the nested children (assuming it's the same "Thread" model)
+                        populate: {
+                            path: "author", // Populate the author field within nested children
+                            model: User,
+                            select: "_id id name parentId image", // Select only _id and username fields of the author
+                        },
+                    },
+                ],
+            })
+            .exec();
+
+        return post;
+    } catch (err) {
+        console.error("Error while fetching post:", err);
+        throw new Error("Unable to fetch post");
+    }
+}

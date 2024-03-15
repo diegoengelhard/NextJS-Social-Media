@@ -16,6 +16,24 @@ interface Params {
     path: string;
 }
 
+// Method to get User
+export async function fetchUser(userId: string) {
+    try {
+        connect();
+
+        const user = await User.findOne({ id: userId })
+        // .populate({
+        //     path: "communities",
+        //     model: Community,
+        // });
+
+        console.log("User fetched successfully: ", user);
+        return user;
+    } catch (error: any) {
+        throw new Error(`Failed to fetch user: ${error.message}`);
+    }
+}
+
 // Method to Update User
 export async function updateUser({ userId, bio, fullname, path, username, image }: Params): Promise<void> {
     try {

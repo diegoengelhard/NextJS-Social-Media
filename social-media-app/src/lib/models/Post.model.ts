@@ -24,7 +24,7 @@ const postSchema = new mongoose.Schema({
     children: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Thread",
+            ref: "Post",
         },
     ],
 }, { timestamps: true });

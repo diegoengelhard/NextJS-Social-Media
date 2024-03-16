@@ -30,6 +30,7 @@ export async function fetchUser(userId: string) {
         console.log("User fetched successfully: ", user);
         return user;
     } catch (error: any) {
+        console.log('Error fetching user: ', error);
         throw new Error(`Failed to fetch user: ${error.message}`);
     }
 }

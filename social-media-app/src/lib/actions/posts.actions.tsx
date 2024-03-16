@@ -125,3 +125,38 @@ export async function fetchPostById(threadId: string) {
         throw new Error("Unable to fetch post");
     }
 }
+
+// Method to create a new comment
+export async function addCommentToPost(threadId: string, commentText: string, userId: string, path: string) {
+    connect();
+
+    try {
+        // Find the original thread by its ID
+        const originalPost = await Post.findById(threadId);
+
+        if (!originalPost) {
+            throw new Error("Post not found");
+        }
+
+        // Create the new comment thread
+        const commentPost = new Post({
+            text: commentText,
+            author: userId,
+            parentId: threadId, // Set the parentId to the original thread's ID
+        });
+
+        // Save the comment thread to the database
+        const savedCommentPost = await commentPost.save();
+
+        // Add the comment thread's ID to the original thread's children array
+        originalPost.children.push(savedCommentPost._id);
+
+        // Save the updated original thread to the database
+        await originalPost.save();
+
+        revalidatePath(path);
+    } catch (err) {
+        console.log("Error while adding comment:", err);
+        throw new Error("Unable to add comment");
+    }
+}

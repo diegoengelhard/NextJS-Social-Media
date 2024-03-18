@@ -47,6 +47,9 @@ const ProfileTabs = async ({ currentUserId, accountId, accountType }: Props) => 
     result = await fetchUserPosts(accountId);
     console.log("RESULT: ", result);
 
+    const posts = await fetchPostsByAuthor(accountId);
+    console.log("RESULTS AUTHOR: ", posts);
+
     // if (accountType === "Community") {
     //     result = await fetchCommunityPosts(accountId);
     // } else {
@@ -60,30 +63,18 @@ const ProfileTabs = async ({ currentUserId, accountId, accountType }: Props) => 
     return (
         <section className='mt-9 flex flex-col gap-10'>
             {/* Render all user posts */}
-            {result.posts.map((post) => (
+            {posts.map((post) => (
                 <PostCard
-                    key={post._id}
-                    id={post._id}
-                    currentUserId={currentUserId}
-                    parentId={post.parentId}
-                    content={post.text}
-                    author={
-                        accountType === "User"
-                            ? { name: result.name, image: result.image, id: result.id }
-                            : {
-                                name: post.author.name,
-                                image: post.author.image,
-                                id: post.author.id,
-                            }
-                    }
-                    community={
-                        accountType === "Community"
-                            ? { name: result.name, id: result.id, image: result.image }
-                            : post.community
-                    }
-                    createdAt={post.createdAt}
-                    comments={post.children}
-                />
+                key={post._id}
+                id={post._id}
+                currentUserId={currentUserId}
+                parentId={post.parentId}
+                content={post.text}
+                author={post.author}
+                community={post.community}
+                createdAt={post.createdAt}
+                comments={post.children}
+              />
             ))}
         </section>
     )

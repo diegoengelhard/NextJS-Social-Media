@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 // Import lib user actions
 import { fetchUser } from "@/lib/actions/user.actions";
+import { fetchPostsByAuthor } from '@/lib/actions/user.actions';
 
 // Import components
 import ProfileHeader from "@/components/shared/ProfileHeader";
@@ -20,6 +21,11 @@ const page = async ({ params }: { params: { id: string } }) => {
 
     const userInfo = await fetchUser(params.id); // Fetch user info by id from params
     if (!userInfo?.onboarded) redirect("/onboarding");
+
+    const posts = await fetchPostsByAuthor(userInfo._id);
+    console.log("Posts: ", posts);
+
+    console.log("_id", userInfo._id);
 
     return (
         <section>
@@ -64,7 +70,7 @@ const page = async ({ params }: { params: { id: string } }) => {
                             {/* @ts-ignore */}
                             <ProfileTabs
                                 currentUserId={user.id}
-                                accountId={userInfo.id}
+                                accountId={userInfo._id}
                                 accountType='User'
                             />
                         </TabsContent>

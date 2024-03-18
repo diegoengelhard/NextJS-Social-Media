@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 // Import user server actions
 import { fetchUserPosts } from '@/lib/actions/user.actions';
+import { fetchPostsByAuthor } from '@/lib/actions/user.actions';
 
 // Import components
 import PostCard from '@/components/cards/PostCard';
@@ -44,6 +45,8 @@ interface Props {
 const ProfileTabs = async ({ currentUserId, accountId, accountType }: Props) => {
     let result: Result; // Define user with its posts as result
     result = await fetchUserPosts(accountId);
+    console.log("RESULT: ", result);
+
     // if (accountType === "Community") {
     //     result = await fetchCommunityPosts(accountId);
     // } else {

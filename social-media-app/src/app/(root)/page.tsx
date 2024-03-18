@@ -9,6 +9,7 @@ export default async function Home() {
   if (!user) return null;
 
   const result = await fetchPosts();
+  console.log("Posts: ", result);
 
   return (
     <main className="text-white">

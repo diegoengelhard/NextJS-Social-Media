@@ -1,6 +1,7 @@
 'use server';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from "next/cache";
+import mongoose from 'mongoose';
 
 import User from '@/lib/models/User.model';
 import Post from '@/lib/models/Post.model';
@@ -94,4 +95,28 @@ export async function fetchUserPosts(userId: string) {
         console.log("Error fetching user threads: ", error);
         throw error;
     }
+}
+
+export async function fetchPostsByAuthor(authorId: string) {
+    connect();
+
+    // Create a query to fetch the posts that have no parent (top-level posts) and are authored by the specified user.
+    const postsQuery = Post.find({ parentId: { $in: [null, undefined] }, author: new mongoose.Types.ObjectId(authorId) })
+        .sort({ createdAt: "desc" })
+        .populate({
+            path: "author",
+            model: User,
+        })
+        .populate({
+            path: "children", // Populate the children field
+            populate: {
+                path: "author", // Populate the author field within children
+                model: User,
+                select: "_id name parentId image", // Select only _id and username fields of the author
+            },
+        });
+
+    const posts = await postsQuery.exec();
+
+    return posts;
 }

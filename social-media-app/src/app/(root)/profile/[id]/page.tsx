@@ -24,7 +24,7 @@ const page = async ({ params }: { params: { id: string } }) => {
 
     const posts = await fetchPostsByAuthor(userInfo._id);
     console.log("Posts: ", posts);
-
+    
     console.log("_id", userInfo._id);
 
     return (

@@ -1,7 +1,7 @@
 'use server';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from "next/cache";
-import mongoose from 'mongoose';
+import mongoose, { FilterQuery, SortOrder } from "mongoose";
 
 import User from '@/lib/models/User.model';
 import Post from '@/lib/models/Post.model';
@@ -97,6 +97,7 @@ export async function fetchUserPosts(userId: string) {
     }
 }
 
+// Method to get all posts given an author
 export async function fetchPostsByAuthor(authorId: string) {
     connect();
 
@@ -120,3 +121,5 @@ export async function fetchPostsByAuthor(authorId: string) {
 
     return posts;
 }
+
+// Method to get all users

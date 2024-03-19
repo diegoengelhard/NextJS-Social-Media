@@ -90,17 +90,17 @@ const PostCard = ({
                                     />
                                 </Link>
                                 <Image
-                                    src='/assets/repost.svg'
+                                    src='/assets/edit.svg'
                                     alt='heart'
-                                    width={24}
-                                    height={24}
+                                    width={20}
+                                    height={20}
                                     className='cursor-pointer object-contain'
                                 />
                                 <Image
-                                    src='/assets/share.svg'
+                                    src='/assets/trash.svg'
                                     alt='heart'
-                                    width={24}
-                                    height={24}
+                                    width={20}
+                                    height={20}
                                     className='cursor-pointer object-contain'
                                 />
                             </div>

@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
+import { ClerkProvider } from "@clerk/nextjs";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -20,11 +21,15 @@ export default function RootLayout({
     children: React.ReactNode;
   }) {
     return (
-        <html lang='en'>
+      <ClerkProvider>
+        <html lang="en">
           <body className={`${inter.className} bg-dark-1`}>
             <ToastContainer />
-            {children}
+            <main className="flex flex-row">
+              <div className="w-full max-w-4xl">{children}</div>
+            </main>
           </body>
         </html>
+      </ClerkProvider>
     );
   }

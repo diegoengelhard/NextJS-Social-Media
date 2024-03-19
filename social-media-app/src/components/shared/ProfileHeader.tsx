@@ -22,6 +22,7 @@ const ProfileHeader = ({
     bio,
     type,
 }: Props) => {
+
     return (
         <div className='flex w-full flex-col justify-start'>
             <div className='flex items-center justify-between'>
@@ -49,7 +50,7 @@ const ProfileHeader = ({
 
                 {/* If user id from params = user id who's signed in, show edit */}
                 {accountId === authUserId && type !== "Community" && (
-                    <Link href='/profile/edit'>
+                    <Link href={`/profile/edit/${accountId}`}>
                         <div className='flex cursor-pointer gap-3 rounded-lg bg-dark-3 px-4 py-2'>
                             <Image
                                 src='/assets/edit.svg'

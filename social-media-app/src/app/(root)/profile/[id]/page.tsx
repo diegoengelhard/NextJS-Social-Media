@@ -3,13 +3,15 @@ import Image from "next/image";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-// Import lib user actions
+// Import lib server user actions
 import { fetchUser } from "@/lib/actions/user.actions";
+import { fetchUserPosts } from '@/lib/actions/user.actions';
 import { fetchPostsByAuthor } from '@/lib/actions/user.actions';
 
 // Import components
 import ProfileHeader from "@/components/shared/ProfileHeader";
 import ProfileTabs from '@/components/shared/ProfileTabs';
+import PostCard from '@/components/cards/PostCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Import constants
@@ -24,7 +26,7 @@ const page = async ({ params }: { params: { id: string } }) => {
 
     const posts = await fetchPostsByAuthor(userInfo._id);
     console.log("Posts: ", posts);
-    
+
     console.log("_id", userInfo._id);
 
     return (
@@ -33,50 +35,31 @@ const page = async ({ params }: { params: { id: string } }) => {
             <ProfileHeader
                 accountId={userInfo.id}
                 authUserId={user.id}
-                name={userInfo.name}
+                name={userInfo.fullname}
                 username={userInfo.username}
                 imgUrl={userInfo.image}
                 bio={userInfo.bio}
             />
 
-            <div className='mt-9'>
-                <Tabs defaultValue='threads' className='w-full'>
-                    <TabsList className='tab'>
-                        {profileTabs.map((tab) => (
-                            <TabsTrigger key={tab.label} value={tab.value} className='tab'>
-                                <Image
-                                    src={tab.icon}
-                                    alt={tab.label}
-                                    width={24}
-                                    height={24}
-                                    className='object-contain'
-                                />
-                                <p className='max-sm:hidden'>{tab.label}</p>
-
-                                {tab.label === "Posts" && (
-                                    <p className='ml-1 rounded-sm bg-light-4 px-2 py-1 !text-tiny-medium text-light-2'>
-                                        {userInfo.posts.length}
-                                    </p>
-                                )}
-                            </TabsTrigger>
-                        ))}
-                    </TabsList>
-                    {profileTabs.map((tab) => (
-                        <TabsContent
-                            key={`content-${tab.label}`}
-                            value={tab.value}
-                            className='w-full text-light-1'
-                        >
-                            {/* @ts-ignore */}
-                            <ProfileTabs
-                                currentUserId={user.id}
-                                accountId={userInfo._id}
-                                accountType='User'
-                            />
-                        </TabsContent>
-                    ))}
-                </Tabs>
-            </div>
+            <section className='mt-9 flex flex-col gap-10'>
+                <h2 className='text-left text-heading3-bold text-light-1'>
+                    Posts
+                </h2>
+                {/* Render all user posts */}
+                {posts.map((post) => (
+                    <PostCard
+                        key={post._id}
+                        id={post._id}
+                        currentUserId={user.id}
+                        parentId={post.parentId}
+                        content={post.text}
+                        author={post.author}
+                        community={post.community}
+                        createdAt={post.createdAt}
+                        comments={post.children}
+                    />
+                ))}
+            </section>
         </section>
     )
 }

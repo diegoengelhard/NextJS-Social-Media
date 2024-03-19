@@ -36,7 +36,7 @@ interface Props {
         id: string;
         objectId: string;
         username: string;
-        name: string;
+        fullname: string;
         bio: string;
         image: string;
     };
@@ -51,13 +51,14 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
     // Set states
     const [files, setFiles] = useState<File[]>([]);
+    const [loading, setLoading] = useState(false);
 
     // Define the form & its validation from the Zod UserValidation schema
     const form = useForm<z.infer<typeof UserValidation>>({
         resolver: zodResolver(UserValidation),
         defaultValues: {
             profile_photo: user?.image ? user.image : "",
-            name: user?.name ? user.name : "",
+            fullname: user?.fullname ? user.fullname : "",
             username: user?.username ? user.username : "",
             bio: user?.bio ? user.bio : "",
         },
@@ -67,15 +68,18 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     const onSubmit = async (values: z.infer<typeof UserValidation>) => {
         const userData = {
             userId: user.id,
-            fullname: values.name,
+            fullname: values.fullname,
             username: values.username,
             bio: values.bio,
             image: values.profile_photo,
+            onboarded: true,
             path: pathname,
         };
         console.log(userData);
 
         try {
+            setLoading(true);
+
             const blob = values.profile_photo;
 
             const hasImageChanged = isBase64Image(blob);
@@ -89,6 +93,8 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             
             await updateUser(userData);
 
+            setLoading(false);
+
             toast.success('Profile updated successfully!');
 
             if (pathname === "/profile/edit") {
@@ -97,6 +103,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                 router.push("/");
             }
         } catch (error: any) {
+            setLoading(false);
             console.log(error);
             toast.error(error.message);
         }
@@ -175,7 +182,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                 {/* User fullname field */}
                 <FormField
                     control={form.control}
-                    name='name'
+                    name='fullname'
                     render={({ field }) => (
                         <FormItem className='flex w-full flex-col gap-3'>
                             <FormLabel className='text-base-semibold text-light-2'>
@@ -236,8 +243,8 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                 />
 
                 {/* Continue to home btn */}
-                <Button type='submit' className='bg-primary-500'>
-                    {btnTitle}
+                <Button type='submit' className='bg-primary-500' disabled={loading}>
+                    {loading ? 'Updating User...' : btnTitle}
                 </Button>
             </form>
         </Form>

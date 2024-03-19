@@ -1,9 +1,10 @@
 'use client';
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import * as z from "zod";
 import Image from "next/image";
+import { currentUser } from "@clerk/nextjs";
 import { useForm } from "react-hook-form";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useParams, redirect } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from 'react-toastify';
 
@@ -45,6 +46,10 @@ interface Props {
 
 
 const AccountProfile = ({ user, btnTitle }: Props) => {
+    const params = useParams();
+
+    if (user.id !== params.id) redirect('/'); // checks if user id from params = user id who's signed in
+
     const router = useRouter(); // Get the router object
     const pathname = usePathname(); // Get the current url pathname
     const { startUpload } = useUploadThing("media");

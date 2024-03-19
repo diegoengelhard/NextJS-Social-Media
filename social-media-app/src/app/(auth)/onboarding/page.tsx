@@ -8,11 +8,9 @@ import { redirect } from 'next/navigation';
 const OnboardingPage = async () => {
   const user = await currentUser(); // fetchs user infd from clerk auth
   if (!user) return null; // to avoid typescript warnings
-  // console.log(user);
 
   const userInfo = await fetchUser(user.id);
   if (userInfo.onboarded) redirect("/");
-  console.log(userInfo);
 
   const userData = {
     id: user.id,

@@ -25,9 +25,6 @@ const page = async ({ params }: { params: { id: string } }) => {
     if (!userInfo?.onboarded) redirect("/onboarding");
 
     const posts = await fetchPostsByAuthor(userInfo._id);
-    console.log("Posts: ", posts);
-
-    console.log("_id", userInfo._id);
 
     return (
         <section>

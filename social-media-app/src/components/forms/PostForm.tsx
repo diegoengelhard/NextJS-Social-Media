@@ -41,6 +41,8 @@ const PostForm = ({ userId }: Props) => {
         },
     });
 
+    console.log('userId: ', userId);
+
     // Submit form function
     const onSubmit = async (values: z.infer<typeof PostValidation>) => {
         try {

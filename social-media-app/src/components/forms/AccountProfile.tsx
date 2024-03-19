@@ -75,6 +75,11 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
             onboarded: true,
             path: pathname,
         };
+
+        if (!(userData.userId || userData.fullname || userData.username || userData.bio || userData.image)) {
+            return toast.error('Missing fields... All fields are required!');
+        }
+
         console.log(userData);
 
         try {

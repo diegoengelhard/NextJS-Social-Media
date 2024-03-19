@@ -7,7 +7,6 @@ import PostCard from "@/components/cards/PostCard";
 export default async function Home() {
   const user = await currentUser();
   if (!user) return null;
-
   const result = await fetchPosts();
   console.log("Posts: ", result);
 

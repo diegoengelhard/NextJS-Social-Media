@@ -82,6 +82,33 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
     return { posts, isNext };
 }
 
+// Method to search posts by keyword
+export async function searchPosts(keyword: string): Promise<any> {
+    connect();
+
+    try {
+        const posts = await Post.find({ text: { $regex: keyword, $options: 'i' } })
+            .sort({ createdAt: "desc" })
+            .populate({
+                path: "author",
+                model: User,
+            })
+            .populate({
+                path: "children", // Populate the children field
+                populate: {
+                    path: "author", // Populate the author field within children
+                    model: User,
+                    select: "_id name parentId image", // Select only _id and username fields of the author
+                },
+            });
+            
+        return posts;
+    } catch (error) {
+        console.log("Error searching posts: ", error);
+        throw new Error("Unable to search post by keyword");
+    }
+}
+
 // Method to fetch post by id
 export async function fetchPostById(threadId: string) {
     connect();

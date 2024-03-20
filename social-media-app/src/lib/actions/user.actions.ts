@@ -122,4 +122,13 @@ export async function fetchPostsByAuthor(authorId: string) {
     return posts;
 }
 
-// Method to get all users
+// Method to search users by username
+export async function searchUsers(keyword: string): Promise<any> {
+    try {
+        const users = await User.find({ username: { $regex: keyword, $options: 'i' } });
+        return users;
+    } catch (error) {
+        console.error("Error searching users: ", error);
+        throw new Error("Unable to search users");
+    }
+}

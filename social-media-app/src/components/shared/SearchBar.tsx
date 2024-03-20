@@ -9,9 +9,6 @@ import { searchPosts } from '@/lib/actions/posts.actions';
 
 // Import components
 import { Input } from "@/components/ui/input";
-import PostCard from '@/components/cards/PostCard';
-import UserCard from '@/components/cards/UserCard';
-
 
 // Define Props
 interface Props {

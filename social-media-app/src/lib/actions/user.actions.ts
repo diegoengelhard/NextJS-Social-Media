@@ -125,10 +125,45 @@ export async function fetchPostsByAuthor(authorId: string) {
 // Method to search users by username
 export async function searchUsers(keyword: string): Promise<any> {
     try {
+        connect();
         const users = await User.find({ username: { $regex: keyword, $options: 'i' } });
         return users;
     } catch (error) {
         console.error("Error searching users: ", error);
         throw new Error("Unable to search users");
+    }
+}
+
+// Method to get user's activity e.g someone replied, liked your post
+export async function getActivity(userId: string) {
+    try {
+        connect();
+
+        // Find all posts created by the user
+        const posts = await Post.find({ author: userId });
+
+        // Collect all the child posts ids (replies) from the 'children' field of each user thread
+        const childrenPostIds = posts.reduce((acc: string[], post) => {
+            return acc.concat(post.children);
+        }, []);
+
+        // Find and return the child posts (replies) excluding the ones created by the same user
+        const replies = await Post.find({
+            _id: { $in: childrenPostIds },
+            author: { $ne: userId }, // Exclude threads authored by the same user
+        }).populate({
+            path: "author",
+            model: User,
+            select: "name image _id",
+        });
+
+        // Find and return the posts that the user liked
+        // TODO
+
+        return replies;
+
+    } catch (error) {
+        console.error("Error getting activity: ", error);
+        throw new Error("Unable to user's activity");
     }
 }

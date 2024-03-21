@@ -101,7 +101,7 @@ export async function searchPosts(keyword: string): Promise<any> {
                     select: "_id name parentId image", // Select only _id and username fields of the author
                 },
             });
-            
+
         return posts;
     } catch (error) {
         console.log("Error searching posts: ", error);
@@ -236,5 +236,70 @@ export async function toggleLikeOnPost(postId: string, userId: string, path: str
     } catch (err) {
         console.error("Error while toggling like on post:", err);
         throw new Error("Unable to toggle like on post");
+    }
+}
+
+// Method to find all children posts of a post
+export async function findChildrenPosts(postId: string): Promise<any[]> {
+    connect();
+
+    try {
+        const childrenPosts = await Post.find({ parentId: postId })
+
+        const descendantPosts = [];
+        for (const childrenPost of childrenPosts) {
+            const descendants = await findChildrenPosts(childrenPost._id);
+            descendantPosts.push(childrenPost, ...descendants);
+        }
+
+        return descendantPosts;
+    } catch (err) {
+        console.error("Error while fetching children posts:", err);
+        throw new Error("Unable to fetch children posts");
+    }
+}
+
+// Method to delete post
+export async function deletePost(postId: string, path: string) {
+    connect();
+
+    try {
+        // Find the post to be deleted (the main post)
+        const mainPost = await Post.findById(postId).populate("author");
+
+        if (!mainPost) {
+            throw new Error("Post not found");
+        }
+
+        // Fetch all child threads and their descendants recursively
+        const descendantPosts = await findChildrenPosts(postId);
+
+        // Get all descendant thread IDs including the main thread ID and child thread IDs
+        const descendantPostIds = [
+            postId,
+            ...descendantPosts.map((post) => post._id),
+        ];
+
+        // Extract the authorIds to update User model
+        const uniqueAuthorIds = new Set(
+            [
+                ...descendantPosts.map((post) => post.author?._id?.toString()), // Use optional chaining to handle possible undefined values
+                mainPost.author?._id?.toString(),
+            ].filter((id) => id !== undefined)
+        );
+
+        // Recursively delete child threads and their descendants
+        await Post.deleteMany({ _id: { $in: descendantPostIds } });
+
+        // Update User model
+        await User.updateMany(
+            { _id: { $in: Array.from(uniqueAuthorIds) } },
+            { $pull: { threads: { $in: descendantPostIds } } }
+        );
+
+        revalidatePath(path);
+    } catch (err) {
+        console.error("Error while deleting post:", err);
+        throw new Error("Unable to delete post");
     }
 }

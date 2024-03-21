@@ -6,6 +6,7 @@ import { fetchUser } from "@/lib/actions/user.actions";
 import { redirect } from 'next/navigation';
 
 import LikePost from '@/components/forms/LikePost';
+import DeletePost from '@/components/forms/DeletePost';
 import { formatDateString } from '@/lib/utils';
 
 // Define post card props
@@ -110,12 +111,10 @@ const PostCard = async ({
                                                 className='cursor-pointer object-contain'
                                             />
                                         </Link>
-                                        <Image
-                                            src='/assets/trash.svg'
-                                            alt='heart'
-                                            width={20}
-                                            height={20}
-                                            className='cursor-pointer object-contain'
+                                        <DeletePost
+                                            postId={id}
+                                            parentId={parentId}
+                                            isComment={isComment}
                                         />
                                     </>
                                 )}

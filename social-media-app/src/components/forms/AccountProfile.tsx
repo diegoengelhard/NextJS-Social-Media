@@ -74,7 +74,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
         const userData = {
             userId: user.id,
             fullname: values.fullname,
-            username: values.username,
+            username: user.username,
             bio: values.bio,
             image: values.profile_photo,
             onboarded: true,
@@ -212,24 +212,26 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
                 {/* User username field */}
                 <FormField
-                    control={form.control}
-                    name='username'
-                    render={({ field }) => (
-                        <FormItem className='flex w-full flex-col gap-3'>
-                            <FormLabel className='text-base-semibold text-light-2'>
-                                Username
-                            </FormLabel>
-                            <FormControl>
-                                <Input
-                                    type='text'
-                                    className='account-form_input no-focus'
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+    control={form.control}
+    name='username'
+    render={({ field }) => (
+        <FormItem className='flex w-full flex-col gap-3'>
+            <FormLabel className='text-base-semibold text-light-2'>
+                Username
+            </FormLabel>
+            <FormControl>
+                <Input
+                    type='text'
+                    className='account-form_input no-focus'
+                    {...field}
+                    disabled
+                    title="Username is unique and cannot be changed"
                 />
+            </FormControl>
+            <FormMessage />
+        </FormItem>
+    )}
+/>
 
                 {/* User bio field */}
                 <FormField

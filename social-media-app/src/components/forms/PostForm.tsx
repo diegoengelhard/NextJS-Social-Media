@@ -44,12 +44,16 @@ const PostForm = ({ userId }: Props) => {
     // Submit form function
     const onSubmit = async (values: z.infer<typeof PostValidation>) => {
         try {
-            await createPost({
+            const postData = {
                 text: values.post,
                 author: userId,
                 communityId: null,
                 path: pathname,
-            });
+            }
+
+            console.log('Post data: ', postData);
+
+            await createPost(postData); // create post
 
             toast.success("Post created successfully");
 

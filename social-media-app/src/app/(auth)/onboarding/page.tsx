@@ -6,19 +6,19 @@ import { fetchUser } from '@/lib/actions/user.actions';
 import { redirect } from 'next/navigation';
 
 const OnboardingPage = async () => {
-  const user = await currentUser(); // fetchs user infd from clerk auth
+  const user = await currentUser();
   if (!user) return null; // to avoid typescript warnings
 
   const userInfo = await fetchUser(user.id);
-  if (userInfo.onboarded) redirect("/");
+  if (userInfo?.onboarded) redirect("/");
 
   const userData = {
     id: user.id,
     objectId: userInfo?._id,
-    username: userInfo ? userInfo?.username : user.username,
-    fullname: userInfo ? userInfo?.fullname : user.firstName ?? "",
+    username: user.username || "",
+    fullname: userInfo ? userInfo?.name : "",
     bio: userInfo ? userInfo?.bio : "",
-    image: userInfo ? userInfo?.image : user.imageUrl,
+    image: userInfo ? userInfo?.image : 'https://static.vecteezy.com/system/resources/previews/005/129/844/non_2x/profile-user-icon-isolated-on-white-background-eps10-free-vector.jpg',
   };
 
   return (

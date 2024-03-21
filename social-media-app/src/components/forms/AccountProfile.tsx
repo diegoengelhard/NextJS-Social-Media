@@ -42,13 +42,14 @@ interface Props {
         image: string;
     };
     btnTitle: string;
+    edit?: boolean;
 }
 
 
-const AccountProfile = ({ user, btnTitle }: Props) => {
+const AccountProfile = ({ user, btnTitle, edit = false }: Props) => {
     const params = useParams();
 
-    if (user.id !== params.id) redirect('/'); // checks if user id from params = user id who's signed in
+    if (edit && user.id !== params.id) redirect('/'); // checks if user id from params = user id who's signed in
 
     const router = useRouter(); // Get the router object
     const pathname = usePathname(); // Get the current url pathname
@@ -63,9 +64,9 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
         resolver: zodResolver(UserValidation),
         defaultValues: {
             profile_photo: user?.image ? user.image : "",
-            fullname: user?.fullname ? user.fullname : "",
-            username: user?.username ? user.username : "",
-            bio: user?.bio ? user.bio : "",
+            fullname: user ? user?.fullname : "",
+            username: user ? user?.username : "",
+            bio: user ? user?.bio : "",
         },
     });
 
@@ -100,7 +101,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                     values.profile_photo = (imgRes[0] as any).fileUrl;
                 }
             }
-            
+
             await updateUser(userData);
 
             setLoading(false);
@@ -155,17 +156,16 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                             <FormLabel className='account-form_image-label'>
                                 {/* Display user profile pic if value exists */}
                                 {field.value ? (
-                                    <Image
+                                    <img
                                         src={field.value}
                                         alt='profile_icon'
                                         width={96}
                                         height={96}
-                                        priority
                                         className='rounded-full object-contain'
                                     />
                                 ) : (
                                     // Display default profile pic if user doesnt have profile pic
-                                    <Image
+                                    <img
                                         src='/assets/profile.svg'
                                         alt='profile_icon'
                                         width={24}
@@ -188,6 +188,7 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
                         </FormItem>
                     )}
                 />
+
 
                 {/* User fullname field */}
                 <FormField
@@ -212,26 +213,26 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
 
                 {/* User username field */}
                 <FormField
-    control={form.control}
-    name='username'
-    render={({ field }) => (
-        <FormItem className='flex w-full flex-col gap-3'>
-            <FormLabel className='text-base-semibold text-light-2'>
-                Username
-            </FormLabel>
-            <FormControl>
-                <Input
-                    type='text'
-                    className='account-form_input no-focus'
-                    {...field}
-                    disabled
-                    title="Username is unique and cannot be changed"
+                    control={form.control}
+                    name='username'
+                    render={({ field }) => (
+                        <FormItem className='flex w-full flex-col gap-3'>
+                            <FormLabel className='text-base-semibold text-light-2'>
+                                Username
+                            </FormLabel>
+                            <FormControl>
+                                <Input
+                                    type='text'
+                                    className='account-form_input no-focus'
+                                    {...field}
+                                    disabled
+                                    title="Username is unique and cannot be changed"
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-            </FormControl>
-            <FormMessage />
-        </FormItem>
-    )}
-/>
 
                 {/* User bio field */}
                 <FormField

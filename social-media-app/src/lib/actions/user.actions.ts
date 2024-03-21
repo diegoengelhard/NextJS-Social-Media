@@ -20,16 +20,14 @@ interface Params {
 
 // Method to get User
 export async function fetchUser(userId: string) {
-    try {
-        connect();
+    connect();
 
-        const user = await User.findOne({ id: userId })
-        // .populate({
-        //     path: "communities",
-        //     model: Community,
-        // });
+    try {
+
+        const user = await User.findOne({ id: userId });
 
         console.log("User fetched successfully: ", user);
+        
         return user;
     } catch (error: any) {
         console.log('Error fetching user: ', error);

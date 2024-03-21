@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 // Import actions
 import { PostValidation } from '@/lib/validations/post.validation';
-import { createPost } from '@/lib/actions/posts.actions';
+import { createPost, updatePost } from '@/lib/actions/posts.actions';
 
 // Import components
 import {
@@ -26,9 +26,14 @@ import { toast } from 'react-toastify';
 // Define props
 interface Props {
     userId: string;
+    postData?: {
+        id: string;
+        text: string;
+    };
+    edit?: boolean;
 }
 
-const PostForm = ({ userId }: Props) => {
+const PostForm = ({ userId, postData, edit = false }: Props) => {
     const router = useRouter(); //  define router
     const pathname = usePathname(); // obtain url pathname
 
@@ -36,7 +41,7 @@ const PostForm = ({ userId }: Props) => {
     const form = useForm<z.infer<typeof PostValidation>>({
         resolver: zodResolver(PostValidation),
         defaultValues: {
-            post: "",
+            post: postData ? postData.text : "",
             accountId: userId,
         },
     });
@@ -44,18 +49,23 @@ const PostForm = ({ userId }: Props) => {
     // Submit form function
     const onSubmit = async (values: z.infer<typeof PostValidation>) => {
         try {
-            const postData = {
-                text: values.post,
-                author: userId,
-                communityId: null,
-                path: pathname,
+            if (edit) {
+                await updatePost(postData?.id ?? '', values.post, pathname); // update post
+                toast.success('Post updated successfully');
+            } else {
+                const createPostData = {
+                    text: values.post,
+                    author: userId,
+                    communityId: null,
+                    path: pathname,
+                }
+
+                console.log('Post data: ', createPostData);
+
+                await createPost(createPostData); // create post
+
+                toast.success("Post created successfully");
             }
-
-            console.log('Post data: ', postData);
-
-            await createPost(postData); // create post
-
-            toast.success("Post created successfully");
 
             // wait for 1 second before redirecting
             setTimeout(() => {
@@ -65,7 +75,7 @@ const PostForm = ({ userId }: Props) => {
             console.log('Error creating post: ', error);
         }
     };
-    
+
     return (
         <Form {...form}>
             <form
@@ -89,7 +99,7 @@ const PostForm = ({ userId }: Props) => {
                 />
 
                 <Button type='submit' className='bg-primary-500'>
-                    Post Thread
+                    {edit ? "Update" : "Post"}
                 </Button>
             </form>
         </Form>

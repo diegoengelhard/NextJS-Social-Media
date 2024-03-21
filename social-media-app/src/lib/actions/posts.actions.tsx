@@ -187,3 +187,24 @@ export async function addCommentToPost(threadId: string, commentText: string, us
         throw new Error("Unable to add comment");
     }
 }
+
+// Methid to update post (only update text field)
+export async function updatePost(postId: string, newText: string, path: string) {
+    connect();
+
+    try {
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId,
+            { text: newText },
+            { new: true }
+        );
+
+        revalidatePath(path);
+
+        return updatedPost;
+
+    } catch (err) {
+        console.error("Error while updating post:", err);
+        throw new Error("Unable to update post");
+    }
+}

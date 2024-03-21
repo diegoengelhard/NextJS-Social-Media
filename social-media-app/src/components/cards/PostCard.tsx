@@ -1,7 +1,11 @@
 import React from 'react';
 import Image from "next/image";
 import Link from "next/link";
+import { currentUser } from "@clerk/nextjs";
+import { fetchUser } from "@/lib/actions/user.actions";
+import { redirect } from 'next/navigation';
 
+import { Input } from "@/components/ui/input";
 import { formatDateString } from '@/lib/utils';
 
 // Define post card props
@@ -29,7 +33,7 @@ interface Props {
     isComment?: boolean;
 }
 
-const PostCard = ({
+const PostCard = async ({
     id,
     currentUserId,
     parentId,
@@ -40,6 +44,12 @@ const PostCard = ({
     comments,
     isComment,
 }: Props) => {
+    const user = await currentUser(); // Get current user from clerk session
+    if (!user) return null;
+
+    const userInfo = await fetchUser(user.id); // Fetch user info by id from params
+    if (!userInfo?.onboarded) redirect("/onboarding");
+
     return (
         <article
             className={`flex w-full flex-col rounded-xl ${isComment ? "px-0 xs:px-7" : "bg-dark-2 p-7"}`}
@@ -89,20 +99,26 @@ const PostCard = ({
                                         className='cursor-pointer object-contain'
                                     />
                                 </Link>
-                                <Image
-                                    src='/assets/edit.svg'
-                                    alt='heart'
-                                    width={20}
-                                    height={20}
-                                    className='cursor-pointer object-contain'
-                                />
-                                <Image
-                                    src='/assets/trash.svg'
-                                    alt='heart'
-                                    width={20}
-                                    height={20}
-                                    className='cursor-pointer object-contain'
-                                />
+                                {user.id === author.id && (
+                                    <>
+                                        <Link href={`/edit-post/${id}`}>
+                                            <Image
+                                                src='/assets/edit.svg'
+                                                alt='heart'
+                                                width={20}
+                                                height={20}
+                                                className='cursor-pointer object-contain'
+                                            />
+                                        </Link>
+                                        <Image
+                                            src='/assets/trash.svg'
+                                            alt='heart'
+                                            width={20}
+                                            height={20}
+                                            className='cursor-pointer object-contain'
+                                        />
+                                    </>
+                                )}
                             </div>
 
                             {isComment && comments && comments?.length > 0 && (
@@ -126,7 +142,7 @@ const PostCard = ({
             </div>
 
             {/* Dipslay post's commennts */}
-            {!isComment  && comments && comments.length > 0 && (
+            {!isComment && comments && comments.length > 0 && (
                 <div className='ml-1 mt-3 flex items-center gap-2'>
                     {comments.slice(0, 2).map((comment, index) => (
                         <Image

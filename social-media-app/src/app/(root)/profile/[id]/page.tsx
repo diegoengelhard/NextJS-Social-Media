@@ -54,6 +54,7 @@ const page = async ({ params }: { params: { id: string } }) => {
                         community={post.community}
                         createdAt={post.createdAt}
                         comments={post.children}
+                        likes={post.likes}
                     />
                 ))}
             </section>

@@ -5,7 +5,7 @@ import { currentUser } from "@clerk/nextjs";
 import { fetchUser } from "@/lib/actions/user.actions";
 import { redirect } from 'next/navigation';
 
-import { Input } from "@/components/ui/input";
+import LikePost from '@/components/forms/LikePost';
 import { formatDateString } from '@/lib/utils';
 
 // Define post card props
@@ -30,6 +30,7 @@ interface Props {
             image: string;
         };
     }[];
+    likes: string[];
     isComment?: boolean;
 }
 
@@ -42,6 +43,7 @@ const PostCard = async ({
     community,
     createdAt,
     comments,
+    likes,
     isComment,
 }: Props) => {
     const user = await currentUser(); // Get current user from clerk session
@@ -83,12 +85,10 @@ const PostCard = async ({
 
                         <div className={`${isComment && "mb-10"} mt-5 flex flex-col gap-3`}>
                             <div className='flex gap-3.5'>
-                                <Image
-                                    src='/assets/heart-gray.svg'
-                                    alt='heart'
-                                    width={24}
-                                    height={24}
-                                    className='cursor-pointer object-contain'
+                                <LikePost 
+                                    postId={id}
+                                    userId={userInfo._id}
+                                    likes={likes}
                                 />
                                 <Link href={`/post/${id}`}>
                                     <Image

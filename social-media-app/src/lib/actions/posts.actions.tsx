@@ -208,3 +208,33 @@ export async function updatePost(postId: string, newText: string, path: string) 
         throw new Error("Unable to update post");
     }
 }
+
+// Method to toggle like on post
+export async function toggleLikeOnPost(postId: string, userId: string, path: string) {
+    connect();
+
+    try {
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            throw new Error("Post not found");
+        }
+
+        const isLiked = post.likes.includes(userId);
+
+        if (isLiked) {
+            post.likes.pull(userId);
+        } else {
+            post.likes.push(userId);
+        }
+
+        const updatedPost = await Post.findByIdAndUpdate(postId, post, { new: true });
+
+        revalidatePath(path);
+
+        return updatedPost;
+    } catch (err) {
+        console.error("Error while toggling like on post:", err);
+        throw new Error("Unable to toggle like on post");
+    }
+}

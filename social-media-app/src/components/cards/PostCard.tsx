@@ -16,7 +16,7 @@ interface Props {
     parentId: string | null;
     content: string;
     author: {
-        name: string;
+        username: string;
         image: string;
         id: string;
     };
@@ -77,7 +77,7 @@ const PostCard = async ({
                     <div className='flex w-full flex-col'>
                         <Link href={`/profile/${author.id}`} className='w-fit'>
                             <h4 className='cursor-pointer text-base-semibold text-light-1'>
-                                {author.name}
+                                @{author.username}
                             </h4>
                         </Link>
 

@@ -14,3 +14,5 @@ This project is a Posts App built with Next.js 14 for Server Side Rendering, Mon
 - **Zod**: Validates data.
 - **React Hook Form**: Manages forms efficiently.
 - **Reusable Components**: Includes a variety of reusable components for easy development.
+
+![Example Image](https://i.ibb.co/09ZxwBC/Screen-Shot-2024-03-21-at-7-43-04-PM.png)
